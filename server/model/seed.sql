@@ -1,0 +1,13 @@
+CREATE TABLE users (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  username TEXT UNIQUE,
+  password TEXT
+);
+
+CREATE TABLE tasks (
+  id INTEGER PRIMARY KEY AUTOINCREMENT, 
+  userId INTEGER, 
+  title TEXT, 
+  completed BOOLEAN, 
+  FOREIGN KEY (userId) REFERENCES users(id)
+);
