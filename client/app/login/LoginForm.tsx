@@ -45,7 +45,7 @@ export default function LoginForm() {
       <label className="flex flex-col">
         Username:
         <input
-          className="text-black"
+          className="text-black my-2"
           required
           type="text"
           value={username}
@@ -55,7 +55,7 @@ export default function LoginForm() {
       <label className="flex flex-col">
         Password:
         <input
-          className="text-black"
+          className="text-black my-2"
           required
           type="password"
           value={password}
