@@ -1,81 +1,70 @@
-import { Database } from "sqlite3";
 import { Request, Response } from "express";
 import { AuthRequest } from "../types/global";
+import Task from "../model/Task";
 
-const getTasksControllers = (db: Database) => ({
-  get_tasks: (req: Request, res: Response) => {
-    const userId = (req as AuthRequest).userId;
-  
-    db.all('SELECT * FROM tasks WHERE userId = ?', [userId], (err, rows) => {
-      if (err) {
-        console.error(err);
-        res.status(500).json({ message: err.message });
-        return;
-      }
-  
-      res.json(rows);
-    });
-  },
-  post_tasks: (req: Request, res: Response) => {
-    const userId = (req as AuthRequest).userId;
-    const { title } = req.body;
-  
-    db.run('INSERT INTO tasks (userId, title, completed) VALUES (?, ?, ?)', [userId, title, false], (err) => {
-      if (err) {
-        console.error(err);
-        res.status(500).json({ message: err.message || 'An error has occurred' });
-      } else {
-        db.get('SELECT last_insert_rowid() AS id', (err, row: { id: string }) => {
-          if (err) {
-            console.error(err);
-            res.status(500).json({ message: err.message || 'Internal server error' });
-          } else {
-            res.status(201).json({ id: row.id, title, completed: false });
-          }
-        });
-      }
-    });
-  },
-  put_tasks: (req: Request, res: Response) => {
-    const userId = (req as AuthRequest).userId;
-    const { title, completed } = req.body;
-    const { id } = req.params;
-  
-    db.run(`
-      UPDATE tasks 
-      SET title = COALESCE(?, title), completed = COALESCE(?, completed)
-      WHERE userId = ? AND id in (?);
-    `, [title, completed, userId, id], (err) => {
-      if (err) {
-        console.error(err);
-        res.status(500).json({ message: err.message || "Internal server error" });
-      } else {
-        db.get("SELECT last_insert_rowid() AS id", (err, row: { id: string }) => {
-          if (err) {
-            console.error(err);
-            res.status(500).json({ message: err.message || 'Internal server error' });
-          } else {
-            res.status(201).json({ message: `Task ${row.id} has been updated` });
-          }
-        });
-      }
-    });
-  },
-  delete_tasks: (req: Request, res: Response) => {
-    const userId = (req as AuthRequest).userId;
-    const { id } = req.params;
-  
-    db.run(`
-      DELETE FROM tasks WHERE userId = ? AND id IN (?);
-    `, [userId, id], (err) => {
-      if (err) {
-        console.error(err);
-        res.status(500).json({ message: err.message || "Internal server error" });
-      } else {
-        res.status(204).end();
-      }
-    });
-  },
-});
+export const get_tasks = async (req: Request, res: Response) => {
+  const userId = (req as AuthRequest).userId;
 
-export default getTasksControllers;
+  try {
+    const tasks = await Task.findAll({ where: { userId }});
+    res.status(200).json(tasks);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: (err as Error)?.message || 'An error has occurred' });
+  }
+};
+
+export const post_tasks = async (req: Request, res: Response) => {
+  const userId = (req as AuthRequest).userId;
+  const { title } = req.body;
+
+  try {
+    const task = await Task.create({ title, userId });
+    res.status(201).json(task);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: (err as Error)?.message || 'An error has occurred' });
+  }
+};
+
+export const put_tasks = async (req: Request, res: Response) => {
+  const userId = (req as AuthRequest).userId;
+  const { title, completed } = req.body;
+  const { id } = req.params;
+
+  try {
+    const task = await Task.findByPk(id);
+    if (!task || task.userId !== Number(userId)) {
+      res.status(404).json({ message: "Task not found or not authorized" });
+      return;
+    }
+    if (typeof completed === 'boolean') {
+      await task.update({ completed });
+    }
+    if (typeof title === 'string') {
+      await task.update({ title });
+    }
+    res.status(200).json(task);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: (err as Error)?.message || "Internal server error" });
+  }
+};
+
+export const delete_tasks = async (req: Request, res: Response) => {
+  const userId = (req as AuthRequest).userId;
+  const { id } = req.params;
+  
+  try {
+    const task = await Task.findByPk(id);
+    if (!task || task.userId !== Number(userId)) {
+      res.status(404).json({ message: "Task not found or not authorized" });
+      return;
+    }
+    await task.destroy();
+    res.status(204).json({ message: "Task deleted successfully" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: (err as Error)?.message || "Internal server error" });
+  }
+};

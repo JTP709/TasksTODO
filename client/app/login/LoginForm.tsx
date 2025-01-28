@@ -57,7 +57,7 @@ export default function LoginForm() {
         <input
           className="text-black"
           required
-          type="text"
+          type="password"
           value={password}
           onChange={handlePasswordOnChange}
         />

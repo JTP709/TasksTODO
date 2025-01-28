@@ -74,7 +74,7 @@ export default function SignUpForm() {
           className="my-2 text-black"
           required
           type="password"
-          minLength={10}
+          minLength={8}
           placeholder="pAsSw0rD!"
           value={password}
           onChange={handlePasswordOnChange}
@@ -86,7 +86,7 @@ export default function SignUpForm() {
           className="my-2 text-black"
           required
           type="password"
-          minLength={10}
+          minLength={8}
           placeholder="pAsSw0rD!"
           value={passwordVerify}
           onChange={handlePasswordVerifyOnChange}

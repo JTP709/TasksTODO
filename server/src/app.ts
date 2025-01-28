@@ -1,10 +1,10 @@
 import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
-import connectToDatabase from './model';
-import getAuthRoutes from './routes/auth';
+import authRoutes from './routes/auth';
 import authentication from './middleware/authentication';
-import getTasksRoutes from './routes/tasks';
+import taskRoutes from './routes/tasks';
+import sequelize from './model';
 
 const app = express();
 app.use(cors({
@@ -13,9 +13,31 @@ app.use(cors({
 }));
 app.use(express.json());
 app.use(cookieParser());
-
-const db = connectToDatabase(app);
-
-app.use('/api/auth', getAuthRoutes(db))
+app.use('/api/auth', authRoutes)
 app.use('/api/tasks', authentication);
-app.use('/api/tasks', getTasksRoutes(db));
+app.use('/api/tasks', taskRoutes);
+
+
+(async function Main() {
+  try {
+    await sequelize.authenticate();
+    console.log('Connected to database');
+
+    if (process.env.NODE_ENV !== 'production') {
+      // await sequelize.sync({ alter: true });
+      // console.log('All models were synchronized successfully');
+    }
+
+    app.listen(4000, () => {
+      console.log('Server is running on port 4000');
+    });
+
+    process.on('exit', () => {
+      sequelize.close()
+        .then(() => console.log('Closed the database connection.'))
+        .catch((err) => console.error('Error closing database connection', err.message));
+    });
+  } catch (err) {
+    console.error('Unable to connect to the database', err);
+  }
+})();

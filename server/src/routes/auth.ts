@@ -1,20 +1,15 @@
 import express from 'express';
-import getAuthControllers from '../controllers/auth';
-import { Database } from 'sqlite3';
+import authControllers from '../controllers/auth';
 
-const getAuthRoutes = (db: Database) => {
-  const router = express.Router();
-  const {
-    signup,
-    login,
-    logout,
-  } = getAuthControllers(db);
+const router = express.Router();
+const {
+  signup,
+  login,
+  logout,
+} = authControllers;
 
-  router.post('/signup', signup);
-  router.post('/login', login);
-  router.post('/logout', logout);
+router.post('/signup', signup);
+router.post('/login', login);
+router.post('/logout', logout);
 
-  return router;
-};
-
-export default getAuthRoutes;
+export default router;
