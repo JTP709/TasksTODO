@@ -1,12 +1,11 @@
 import express from 'express';
-import authControllers from '../controllers/auth';
-
-const router = express.Router();
-const {
+import {
   signup,
   login,
   logout,
-} = authControllers;
+} from '../controllers/auth';
+
+const router = express.Router();
 
 router.post('/signup', signup);
 router.post('/login', login);
