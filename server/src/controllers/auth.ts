@@ -2,6 +2,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { Request, Response } from 'express';
 import User from '../model/User';
+import { handleErrors } from '../utils';
 
 const SECRET_KEY = 'secret_key';
 const TOKEN_EXPIRATION = '1h';
@@ -31,8 +32,7 @@ const authControllers = {
           user: { id: newUser.id, username: newUser.username},
         });
     } catch (err) {
-      console.error(err);
-      res.status(500).json({ message: (err as Error)?.message || "Internal server error" });
+      handleErrors(res, err);
     }
   },
   login: async (req: Request, res: Response) => {
@@ -71,8 +71,7 @@ const authControllers = {
 
       res.status(201).json({ message: 'Login successful', token });
     } catch (err) {
-      console.error(err);
-      res.status(500).json({ message: (err as Error)?.message || "Internal server error" });
+      handleErrors(res, err);
     }
   },
   logout: (_: Request, res: Response) => {

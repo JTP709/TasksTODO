@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { AuthRequest } from "../types/global";
 import Task from "../model/Task";
+import { handleErrors } from "../utils";
 
 export const get_tasks = async (req: Request, res: Response) => {
   const userId = (req as AuthRequest).userId;
@@ -9,8 +10,7 @@ export const get_tasks = async (req: Request, res: Response) => {
     const tasks = await Task.findAll({ where: { userId }});
     res.status(200).json(tasks);
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: (err as Error)?.message || 'An error has occurred' });
+    handleErrors(res, err);
   }
 };
 
@@ -22,8 +22,7 @@ export const post_tasks = async (req: Request, res: Response) => {
     const task = await Task.create({ title, userId });
     res.status(201).json(task);
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: (err as Error)?.message || 'An error has occurred' });
+    handleErrors(res, err);
   }
 };
 
@@ -46,8 +45,7 @@ export const put_tasks = async (req: Request, res: Response) => {
     }
     res.status(200).json(task);
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: (err as Error)?.message || "Internal server error" });
+    handleErrors(res, err);
   }
 };
 
@@ -64,7 +62,6 @@ export const delete_tasks = async (req: Request, res: Response) => {
     await task.destroy();
     res.status(204).json({ message: "Task deleted successfully" });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: (err as Error)?.message || "Internal server error" });
+    handleErrors(res, err);
   }
 };
