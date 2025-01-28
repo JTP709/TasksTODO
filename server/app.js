@@ -104,12 +104,37 @@ app.post('/api/tasks', (req, res) => {
       console.error(err);
       res.status(500).json({ message: err.message || 'An error has occurred' });
     } else {
-      db.get('SELECT last_insert_rowid() as id', (err, row) => {
+      db.get('SELECT last_insert_rowid() AS id', (err, row) => {
         if (err) {
           console.error(err);
           res.status(500).json({ message: err.message || 'Internal server error' });
         } else {
           res.status(201).json({ id: row.id, title, completed: false });
+        }
+      });
+    }
+  });
+});
+
+app.put('/api/tasks/:id', (req, res) => {
+  const userId = req.userId;
+  const { title, completed } = req.body;
+
+  db.run(`
+    UPDATE tasks 
+    SET title = COALESCE(?, title), completed = COALESCE(?, completed)
+    WHERE userId = ?;
+  `, [title, completed, userId], (err) => {
+    if (err) {
+      console.error(err);
+      res.status(500).json({ message: err.message || "Internal server error" });
+    } else {
+      db.get("SELECT last_insert_rowid() AS id", (err, row) => {
+        if (err) {
+          console.error(err);
+          res.status(500).json({ message: err.message || 'Internal server error' });
+        } else {
+          res.status(201).json({ message: `Task ${row.id} has been updated` });
         }
       });
     }
