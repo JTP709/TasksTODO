@@ -29,13 +29,12 @@ export default function TaskInput({ title, id }: TaskInputProps) {
     }).finally(() => setIsPending(false));
   }, 1000);
 
-  const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => updateTask(e.currentTarget.value);
+  const handleOnChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => updateTask(e.currentTarget.value);
 
   return (
-    <input
-      className="text-black mr-8"
+    <textarea
+      className="text-black mr-8 mb-2"
       aria-label="edit your task" 
-      type="text"
       defaultValue={title}
       onChange={handleOnChange}
       disabled={isPending}

@@ -8,7 +8,7 @@ export default function AddTask() {
   const [isPending, setIsPending] = useState(false);
   const router = useRouter();
 
-  const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleOnChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setTask(e.currentTarget.value);
   };
 
@@ -37,22 +37,23 @@ export default function AddTask() {
     <>
       <h2 className="font-semibold">Add a new Task</h2>
       <form className="flex flex-col" onSubmit={handleOnSubmit}>
-        <label className="flex flex-col">
+        <label>
           New Task:
-          <input 
-            type="text"
+        </label>
+        <div className="flex flex-row">
+          <textarea 
             className="text-black"
             onChange={handleOnChange}
             value={task}
           />
-        </label>
-        <button
-          className="mt-2 p-2 border-gray-500 border-2"
-          disabled={isPending}
-          type="submit"
-        >
-          Submit
-        </button>
+          <button
+            className="ml-2 p-2 border-gray-500 border-2"
+            disabled={isPending}
+            type="submit"
+          >
+            Submit
+          </button>
+        </div>
       </form>
     </>
   )

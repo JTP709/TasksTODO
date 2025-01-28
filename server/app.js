@@ -119,12 +119,13 @@ app.post('/api/tasks', (req, res) => {
 app.put('/api/tasks/:id', (req, res) => {
   const userId = req.userId;
   const { title, completed } = req.body;
+  const { id } = req.params;
 
   db.run(`
     UPDATE tasks 
     SET title = COALESCE(?, title), completed = COALESCE(?, completed)
-    WHERE userId = ?;
-  `, [title, completed, userId], (err) => {
+    WHERE userId = ? AND id in (?);
+  `, [title, completed, userId, id], (err) => {
     if (err) {
       console.error(err);
       res.status(500).json({ message: err.message || "Internal server error" });
@@ -137,6 +138,22 @@ app.put('/api/tasks/:id', (req, res) => {
           res.status(201).json({ message: `Task ${row.id} has been updated` });
         }
       });
+    }
+  });
+});
+
+app.delete('/api/tasks/:id', (req, res) => {
+  const userId = req.userId;
+  const { id } = req.params;
+
+  db.run(`
+    DELETE FROM tasks WHERE userId = ? AND id IN (?);
+  `, [userId, id], (err) => {
+    if (err) {
+      console.error(err);
+      res.status(500).json({ message: err.message || "Internal server error" });
+    } else {
+      res.status(204).end();
     }
   });
 });

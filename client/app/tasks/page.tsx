@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import AddTask from "./AddTaskForm";
 import CompletedTaskBtn from "./CompletedTaskBtn";
 import TaskInput from "./TaskInput";
+import DeleteTaskBtn from "./DeleteTaskBtn";
 
 export default async function TasksPage() {
   const cookieStore = cookies();
@@ -28,6 +29,7 @@ export default async function TasksPage() {
           >
             <TaskInput id={task.id} title={task.title} />
             <CompletedTaskBtn id={task.id} completed={task.completed} />
+            <DeleteTaskBtn id={task.id} />
           </li>
         ))}
       </ul>
