@@ -57,30 +57,41 @@ export default function SignUpForm() {
       className="flex flex-col"
       onSubmit={handleSubmit}
     >
-      <input
-        className="my-2 text-black"
-        required
-        type="text"
-        placeholder="Username"
-        value={username}
-        onChange={handleUsernameOnChange}
-      />
-      <input
-        className="my-2 text-black"
-        required
-        type="text"
-        placeholder="Password"
-        value={password}
-        onChange={handlePasswordOnChange}
-      />
-      <input
-        className="my-2 text-black"
-        required
-        type="text"
-        placeholder="Verify Password"
-        value={passwordVerify}
-        onChange={handlePasswordVerifyOnChange}
-      />
+      <label className="flex flex-col">
+        Username:
+        <input
+          className="my-2 text-black"
+          required
+          type="text"
+          placeholder="ReallyCoolDude99"
+          value={username}
+          onChange={handleUsernameOnChange}
+        />
+      </label>
+      Password:
+      <label className="flex flex-col">
+        <input
+          className="my-2 text-black"
+          required
+          type="password"
+          minLength={10}
+          placeholder="pAsSw0rD!"
+          value={password}
+          onChange={handlePasswordOnChange}
+        />
+      </label>
+      <label className="flex flex-col">
+        Verify Password:
+        <input
+          className="my-2 text-black"
+          required
+          type="password"
+          minLength={10}
+          placeholder="pAsSw0rD!"
+          value={passwordVerify}
+          onChange={handlePasswordVerifyOnChange}
+        />
+      </label>
       <button
         className="mt-2 p-4 border-gray-500 border-2"
         type="submit"
