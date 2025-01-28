@@ -1,8 +1,8 @@
-const express = require('express');
-const path = require('path');
-const getTasksControllers = require(path.resolve(__dirname, '../controllers/tasks'));
+import express from 'express';
+import getTasksControllers from '../controllers/tasks';
+import { Database } from 'sqlite3';
 
-const getTasksRoutes = (db) => {
+const getTasksRoutes = (db: Database) => {
   const router = express.Router();
   const {
     get_tasks,
@@ -19,4 +19,4 @@ const getTasksRoutes = (db) => {
   return router;
 };
 
-module.exports = getTasksRoutes;
+export default getTasksRoutes;

@@ -1,8 +1,8 @@
-const express = require('express');
-const path = require('path');
-const getAuthControllers = require(path.resolve(__dirname, '../controllers/auth'));
+import express from 'express';
+import getAuthControllers from '../controllers/auth';
+import { Database } from 'sqlite3';
 
-const getAuthRoutes = (db) => {
+const getAuthRoutes = (db: Database) => {
   const router = express.Router();
   const {
     signup,
@@ -17,4 +17,4 @@ const getAuthRoutes = (db) => {
   return router;
 };
 
-module.exports = getAuthRoutes;
+export default getAuthRoutes;

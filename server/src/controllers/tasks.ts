@@ -1,6 +1,10 @@
-const getTasksControllers = (db) => ({
-  get_tasks: (req, res) => {
-    const userId = req.userId;
+import { Database } from "sqlite3";
+import { Request, Response } from "express";
+import { AuthRequest } from "../types/global";
+
+const getTasksControllers = (db: Database) => ({
+  get_tasks: (req: Request, res: Response) => {
+    const userId = (req as AuthRequest).userId;
   
     db.all('SELECT * FROM tasks WHERE userId = ?', [userId], (err, rows) => {
       if (err) {
@@ -12,8 +16,8 @@ const getTasksControllers = (db) => ({
       res.json(rows);
     });
   },
-  post_tasks: (req, res) => {
-    const userId = req.userId;
+  post_tasks: (req: Request, res: Response) => {
+    const userId = (req as AuthRequest).userId;
     const { title } = req.body;
   
     db.run('INSERT INTO tasks (userId, title, completed) VALUES (?, ?, ?)', [userId, title, false], (err) => {
@@ -21,7 +25,7 @@ const getTasksControllers = (db) => ({
         console.error(err);
         res.status(500).json({ message: err.message || 'An error has occurred' });
       } else {
-        db.get('SELECT last_insert_rowid() AS id', (err, row) => {
+        db.get('SELECT last_insert_rowid() AS id', (err, row: { id: string }) => {
           if (err) {
             console.error(err);
             res.status(500).json({ message: err.message || 'Internal server error' });
@@ -32,8 +36,8 @@ const getTasksControllers = (db) => ({
       }
     });
   },
-  put_tasks: (req, res) => {
-    const userId = req.userId;
+  put_tasks: (req: Request, res: Response) => {
+    const userId = (req as AuthRequest).userId;
     const { title, completed } = req.body;
     const { id } = req.params;
   
@@ -46,7 +50,7 @@ const getTasksControllers = (db) => ({
         console.error(err);
         res.status(500).json({ message: err.message || "Internal server error" });
       } else {
-        db.get("SELECT last_insert_rowid() AS id", (err, row) => {
+        db.get("SELECT last_insert_rowid() AS id", (err, row: { id: string }) => {
           if (err) {
             console.error(err);
             res.status(500).json({ message: err.message || 'Internal server error' });
@@ -57,8 +61,8 @@ const getTasksControllers = (db) => ({
       }
     });
   },
-  delete_tasks: (req, res) => {
-    const userId = req.userId;
+  delete_tasks: (req: Request, res: Response) => {
+    const userId = (req as AuthRequest).userId;
     const { id } = req.params;
   
     db.run(`
@@ -74,4 +78,4 @@ const getTasksControllers = (db) => ({
   },
 });
 
-module.exports = getTasksControllers;
+export default getTasksControllers;

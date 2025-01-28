@@ -1,8 +1,11 @@
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import { Request, Response } from 'express';
+import { Database } from 'sqlite3';
+import { User } from '../types/global';
 
-const getAuthControllers = (db) => ({
-  signup: async (req, res) => {
+const getAuthControllers = (db: Database) => ({
+  signup: async (req: Request, res: Response) => {
     const { username, password } = req.body;
   
     if (!username || !password ) {
@@ -14,7 +17,7 @@ const getAuthControllers = (db) => ({
   
     db.run('INSERT INTO users (username, password) VALUES (?, ?)', [username, hashedPassword], (err) => {
       if (err) {
-        if (err.code === 'SQLITE_CONSTRAINT') {
+        if ((err as any)?.code === 'SQLITE_CONSTRAINT') {
           res.status(400).json({ message: "Username already exists" })
           return;
         } else {
@@ -26,7 +29,7 @@ const getAuthControllers = (db) => ({
       }
     });
   },
-  login: (req, res) => {
+  login: (req: Request, res: Response) => {
     const { username, password } = req.body;
   
     if (!username || !password) {
@@ -34,7 +37,7 @@ const getAuthControllers = (db) => ({
       return;
     }
   
-    db.get('SELECT * FROM users WHERE username = ?', [username], async (err, user) => {
+    db.get('SELECT * FROM users WHERE username = ?', [username], async (err, user: User) => {
       if (err || !user) {
         res.status(401).json({ message: 'Invalid credentials' });
         return;
@@ -57,7 +60,7 @@ const getAuthControllers = (db) => ({
       }
     });
   },
-  logout: (_, res) => {
+  logout: (_: Request, res: Response) => {
     res.cookie('token', '', {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
@@ -69,4 +72,4 @@ const getAuthControllers = (db) => ({
   },
 });
 
-module.exports = getAuthControllers;
+export default getAuthControllers;
