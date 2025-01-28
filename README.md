@@ -20,13 +20,19 @@ Change the directory into the `/server`.
 
 Install the node packages with `npm install`.
 
-On the FIRST time running the application, open `/server/src/app.ts` and uncomment out lines 37 and 38:
+Rename the file `_todo.sqlite` in the `/server/model` to `todo.sqlite` (remove the underscore).
 
+Run the application with `npm run dev`.
+
+**Troubleshooting:**
+Sometimes the sequelize ORM will run into some errors when trying to sync the database.
+
+If this happens, easiest way to recover is to:
+1. Delete the database and create a fresh one. Delete the file `todo.sqlite` in the `/server/model` directory and create a new one with the same name.
+2. Restart the server.
+
+If this continues to happen, you can comment out lines 37 and 38 in `/server/src/app.ts`.
 ```typescript
 await sequelize.sync({ alter: true });
 console.log('All models were synchronized successfully');
 ```
-
-For some reason, on subsequent starts, `sequelize` would run into errors trying to overwrite the database. I haven't solved this problem other than to prevent it from syncing the database on start unless the database is fresh.
-
-Run the application with `npm run dev`.

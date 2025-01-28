@@ -34,8 +34,8 @@ app.use('/api/tasks', taskRoutes);
     console.log('Connected to database');
 
     if (process.env.NODE_ENV !== 'production') {
-      // await sequelize.sync({ alter: true });
-      // console.log('All models were synchronized successfully');
+      await sequelize.sync({ alter: true });
+      console.log('All models were synchronized successfully');
     }
 
     app.listen(4000, () => {

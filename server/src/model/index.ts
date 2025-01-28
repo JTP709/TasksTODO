@@ -1,7 +1,7 @@
 import path from 'path';
 import { Sequelize } from 'sequelize';
 
-const dbPath = path.resolve(__dirname, './todo.db');
+const dbPath = path.resolve(__dirname, './todo.sqlite');
 const sequelize = new Sequelize({
   dialect: 'sqlite',
   storage: dbPath,

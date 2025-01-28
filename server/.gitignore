@@ -3,3 +3,5 @@
 .env*
 
 /dist
+
+/model/todo.sqlite
