@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function SignUpForm() {
@@ -8,6 +9,7 @@ export default function SignUpForm() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [passwordVerify, setPasswordVerify] = useState("");
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -18,15 +20,19 @@ export default function SignUpForm() {
       return;
     }
 
-    await fetch("http://localhost:4000/auth/signup",{
+    await fetch("http://localhost:4000/api/auth/signup",{
       method: "POST",
       headers: new Headers({ "content-type": "application/json" }),
       body: JSON.stringify({
         username,
         password
       })
-    }).then(res => res.json())
-      .then(res => setMessage(res.data.message))
+    }).then(async (res) => {
+      const data = await res.json();
+      if (!res.ok) setMessage(data.message)
+      router.push("/login");
+      return data;
+    })
       .catch(err => setMessage(err.response.data.message || "An error has occurred"))
       .finally(() => setIsPending(false));
   };
@@ -52,7 +58,7 @@ export default function SignUpForm() {
       onSubmit={handleSubmit}
     >
       <input
-        className="my-2"
+        className="my-2 text-black"
         required
         type="text"
         placeholder="Username"
@@ -60,7 +66,7 @@ export default function SignUpForm() {
         onChange={handleUsernameOnChange}
       />
       <input
-        className="my-2"
+        className="my-2 text-black"
         required
         type="text"
         placeholder="Password"
@@ -68,7 +74,7 @@ export default function SignUpForm() {
         onChange={handlePasswordOnChange}
       />
       <input
-        className="my-2"
+        className="my-2 text-black"
         required
         type="text"
         placeholder="Verify Password"

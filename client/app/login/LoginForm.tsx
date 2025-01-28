@@ -15,19 +15,18 @@ export default function LoginForm() {
     setIsPending(true);
     setMessage("");
 
-    await fetch("http://localhost:4000/auth/login", {
+    await fetch("/api/auth/login", {
       method: "POST",
       headers: new Headers({ 'content-type': 'application/json' }),
       body: JSON.stringify({ username, password }),
     }).then(res => {
-      if (!res.ok) setMessage("An error has occurred");
-      else return res.json()
-    }).then(res => localStorage.setItem("token", res.data.token))
-      .then(() => router.push("/tasks"))
-      .catch(err => {
-        console.error(err);
-        setMessage(err.response.data.message || "An error has occurred");
-      });
+      if (!res.ok) {setMessage("An error has occurred");
+      console.log({ res })}
+      else router.push("/tasks");
+    }).catch(err => {
+      console.error(err);
+      setMessage(err.response.data.message || "An error has occurred");
+    }).finally(() => setIsPending(false));
   };
 
   const handleUsernameOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -39,19 +38,24 @@ export default function LoginForm() {
   };
 
   return (
-    <form onSubmit={handleOnSubmit}>
-      <label>
+    <form 
+      className="flex flex-col"
+      onSubmit={handleOnSubmit}
+    >
+      <label className="flex flex-col">
         Username:
         <input
+          className="text-black"
           required
           type="text"
           value={username}
           onChange={handleUsernameOnChange}
         />
       </label>
-      <label>
+      <label className="flex flex-col">
         Password:
         <input
+          className="text-black"
           required
           type="text"
           value={password}
@@ -59,6 +63,7 @@ export default function LoginForm() {
         />
       </label>
       <button
+        className="mt-2 p-4 border-gray-500 border-2"
         type="submit"
         disabled={isPending}
       >
