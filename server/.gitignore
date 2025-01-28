@@ -4,4 +4,4 @@
 
 /dist
 
-/model/todo.sqlite
+/src/model/todo.sqlite
