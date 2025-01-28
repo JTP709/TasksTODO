@@ -5,6 +5,16 @@ import authRoutes from './routes/auth';
 import authentication from './middleware/authentication';
 import taskRoutes from './routes/tasks';
 import sequelize from './model';
+import dotenv from 'dotenv';
+import path from 'path';
+
+const envFile = {
+  development: '.env',
+  test: '.env.test',
+  production: '.env.production',
+}[process.env.NODE_ENV || 'development'];
+
+dotenv.config({ path: path.resolve(__dirname, (envFile as string)) });
 
 const app = express();
 app.use(cors({
